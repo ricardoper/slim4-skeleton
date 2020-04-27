@@ -229,6 +229,45 @@ To get the **best performance** there are some configurations to pay attention. 
 > 
 > When you deploy new versions of your code to production you must delete the generated file (or the directory that contains it) to ensure that the container is re-compiled.
 
+## Benchmarks
+
+Nothing is free, so let's compare the performance loss with Slim Skeleton.
+
+**Machine:**<br/>
+Intel® Core™ i5-8400 CPU @ 2.80GHz × 6<br>
+16Gb RAM<br>
+SSD<br>
+
+**Versions:**<br/>
+Docker v19.03.8<br>
+nginx 1.17.10<br/>
+PHP v7.4.3<br/>
+Zend OPcache enabled<br/>
+SIEGE 4.0.4
+
+**Bench Details:**<br/>
+25 concurrent connections<br/>
+500 requests per thread<br/>
+No delays between requests<br/>
+Command: siege -c25 -b -r500 "URL"<br/>
+<br/>
+
+|  | My Skeleton | Slim Skeleton |
+| --- | :----: | :---: |
+| Transactions | 12500 hits | 12500 hits |
+| Availability | 100.00 % | 100.00 % |
+| Elapsed time | 9.90 secs | 9.05 secs |
+| Data transferred | 0.45 MB | 0.38 MB |
+| Response time | 0.02 secs | 0.02 secs |
+| Transaction rate | 1262.63 trans/sec | 1381.22 trans/sec |
+| Throughput | 0.05 MB/sec | 0.04 MB/sec |
+| Concurrency | 24.54 | 24.48 |
+| Successful transactions | 12500 | 12500 |
+| Failed transactions | 0 | 0 |
+| Longest transaction | 0.06 | 0.09 |
+| Shortest transaction | 0.00 | 0.00 |
+<br/>
+
 ___
 
 ### Enjoy the simplicity :oP
