@@ -1,0 +1,40 @@
+{
+    "name": "ricardoper/slim4-skeleton",
+    "type": "library",
+    "license": "MIT",
+    "description": "A better Slim Framework 4 Skeleton with a sane folder structure where everything is customizable",
+    "keywords": [
+        "PHP",
+        "Slim",
+        "Framework",
+        "Skeleton"
+    ],
+    "homepage": "https://github.com/ricardoper",
+    "authors": [
+        {
+            "name": "Ricardo Pereira",
+            "email": "github@ricardopereira.es",
+            "homepage": "http://ricardopereira.es"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "ext-json": "*",
+        "slim/slim": "^4.5",
+        "slim/psr7": "^1.0",
+        "php-di/php-di": "^6.0",
+        "vlucas/phpdotenv": "^4.1",
+        "monolog/monolog": "^2.0"
+    },
+    "require-dev": {
+        "ricardoper/ddumper": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "bootstrap/helpers.php"
+        ]
+    }
+}
