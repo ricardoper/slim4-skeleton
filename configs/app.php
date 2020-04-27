@@ -6,13 +6,21 @@ use App\Kernel\Handlers\ShutdownHandler;
 
 return [
 
-    'errorHandler' => HttpErrorHandler::class,
+    // Deployment //
+    'inProd'  => env('APP_IN_PROD', false),
+    'inDocker'  => env('APP_IN_DOCKER', false),
 
-    'shutdownHandler' => ShutdownHandler::class,
 
+    // Debugging //
+    'debug' => env('APP_DEBUG', false),
     'logErrors' => env('LOG_ERRORS', true),
     'logErrorDetails' => env('LOG_ERRORS_DETAILS', true),
     'displayErrorDetails' => env('APP_DEBUG', false),
+
+
+    // Handlers //
+    'errorHandler' => HttpErrorHandler::class,
+    'shutdownHandler' => ShutdownHandler::class,
 
 
     // Includes //

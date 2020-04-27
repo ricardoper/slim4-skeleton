@@ -19,9 +19,9 @@ This skeleton application was built for Composer. This makes setting up a new Sl
 
 - Controllers
 - Global Helpers
-- Logging with Monolog
-- Environment variables with Dotenv
-- ddumper (based on Symfony VarDumper)
+- [Monolog](https://github.com/Seldaek/monolog) Logging
+- Environment variables with [PHP dotenv](https://github.com/vlucas/phpdotenv)
+- [ddumper](https://github.com/ricardoper/ddumper) (based on [Symfony VarDumper](https://github.com/symfony/var-dumper))
 
 ## How to install this skeleton
 
@@ -203,7 +203,7 @@ Demo URL's:
 
 Logging is enabled by default and you can see all the output in ```/storage/logs/app.log```.
 
-You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```
+You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```.
 
 *LOG_ERRORS* - *logErrors* - *bool* - Enable/Disable logging
 
@@ -211,13 +211,19 @@ You can set this parameters in ```/.env``` file you overwrite the ```/configs/ap
 
 ## Debugging
 
-Debugging is disabled by default. You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```
+Debugging is disabled by default. You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```.
 
 *APP_DEBUG* - *displayErrorDetails* - *bool* - Enable/Disable debugging
 
-**NOTE**: When debugging is disabled, this skeleton will enable PHP-DI Compilation automatically. You can get more details in [PHP-DI Performances](http://php-di.org/doc/performances.html)
+## Deployment
 
-> ###Deployment in production:
+To get the **best performance** there are some configurations to pay attention. You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```.
+- *APP_IN_PROD* - *inProd* - *bool* - Set it to ```true``` when your app is ready to run in production.
+- *APP_IN_DOCKER* - *inDocker* - *bool* - ```true``` If your app is running in Docker and you want to output logs in console, ```false``` to output logs via Monolog.
+
+**NOTE**: When *APP_IN_PROD* or *inProd* is set to ```true```, this skeleton will enable PHP-DI Compilation automatically. You can get more details in [PHP-DI Performances](http://php-di.org/doc/performances.html):
+
+> Deployment in production:
 > 
 > When a container is configured to be compiled, it will be compiled once and never be regenerated again. That allows for maximum performances in production.
 > 

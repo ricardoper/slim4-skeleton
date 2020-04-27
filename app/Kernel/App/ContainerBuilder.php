@@ -31,8 +31,14 @@ class ContainerBuilder extends DIContainerBuilder
     {
         $this->settings = require configs_path('app.php');
 
-        if (env('APP_DEBUG', false) === false) {
+        if (env('APP_IN_PROD', false) === true) {
             parent::enableCompilation(storage_path('cache'));
+        } else {
+            $containerCompiled = storage_path('cache/CompiledContainer.php');
+
+            if (file_exists($containerCompiled) === true) {
+                unlink(storage_path('cache/CompiledContainer.php'));
+            }
         }
 
         $this->registerConfigs();

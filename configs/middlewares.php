@@ -6,7 +6,7 @@ use App\Middlewares\SessionMiddleware;
 
 return [
 
-    SessionMiddleware::class,
+    // SessionMiddleware::class,
 
     ExampleMiddleware::class,
 
