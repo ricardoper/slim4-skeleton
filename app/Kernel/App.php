@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Kernel\App;
+namespace App\Kernel;
 
-use App\Kernel\ServiceProviderInterface;
 use Pimple\Container;
 use Pimple\Psr11\Container as PsrContainer;
 use Psr\Http\Message\ResponseInterface;
