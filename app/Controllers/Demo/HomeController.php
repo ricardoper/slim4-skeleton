@@ -26,4 +26,27 @@ class HomeController
 
         return $response;
     }
+
+    /**
+     * Dump Action
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function dump(Request $request, Response $response): void
+    {
+        unset($request, $response);
+
+        d(app());
+
+        d(container());
+
+        d(container('example'));
+
+        d(configs());
+        d(configs('services'));
+
+        dde(env('LOG_ERRORS', false));
+    }
 }

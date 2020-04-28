@@ -5,7 +5,7 @@ namespace App\Services\Demo;
 
 use App\Kernel\ServiceProviderInterface;
 use Closure;
-use Psr\Container\ContainerInterface;
+use Pimple\Container;
 
 class ExampleServiceProvider implements ServiceProviderInterface
 {
@@ -20,10 +20,13 @@ class ExampleServiceProvider implements ServiceProviderInterface
 
     /**
      * Register new service on dependency container
+     *
+     * @param Container $c
+     * @return Closure
      */
-    public function register(): Closure
+    public function register(Container $c): Closure
     {
-        return function (ContainerInterface $c) {
+        return function (Container $c) {
             unset($c);
 
             return new Example();

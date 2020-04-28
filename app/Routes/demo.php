@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 use App\Controllers\Demo\HelloController;
 use App\Controllers\Demo\HomeController;
-use App\Kernel\App\App;
+use Slim\App;
 
 /**
- * @var $this App
+ * @var $app App
  */
 
-$this->get('/', [(new HomeController()), 'index']);
+$app->get('/', [(new HomeController()), 'index']);
 
-$this->get('/hello/{name}', [(new HelloController()), 'index']);
+$app->get('/dump', [(new HomeController()), 'dump']);
+
+$app->get('/hello/{name}', [(new HelloController()), 'index']);

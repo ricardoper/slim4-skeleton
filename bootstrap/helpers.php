@@ -24,13 +24,11 @@ if (!function_exists('container')) {
      */
     function container(string $name = null)
     {
-        $app = App::getInstance();
-
         if ($name === null) {
-            return $app->getContainer();
+            return app()->getContainer();
         }
 
-        return $app->getContainer()->get($name) ?? null;
+        return app()->getContainer()[$name] ?? null;
     }
 }
 
@@ -44,17 +42,15 @@ if (!function_exists('configs')) {
      */
     function configs(string $name = null, $default = null)
     {
-        $app = App::getInstance();
-
-        $settings = $app->getContainer()->get('settings') ?? null;
+        $configs = app()->getConfigs() ?? null;
 
         if ($name === null) {
-            return $settings;
-        } else if ($settings === null) {
+            return $configs;
+        } else if ($configs === null) {
             return $default;
         }
 
-        return $settings[$name] ?? $default;
+        return $configs[$name] ?? $default;
     }
 }
 

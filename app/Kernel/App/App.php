@@ -3,30 +3,73 @@ declare(strict_types=1);
 
 namespace App\Kernel\App;
 
+use App\Kernel\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\Psr11\Container as PsrContainer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\App as SlimApp;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
+use Slim\Psr7\Factory\ResponseFactory;
 
-class App extends SlimApp
+class App
 {
 
     /**
-     * App Configs
-     *
-     * @var array
-     */
-    protected $settings = [];
-
-    /**
-     * App Instance
+     * Instance
      *
      * @var App|null
      */
-    private static $instance;
+    protected static $instance;
 
+    /**
+     * Container
+     *
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * Configs
+     *
+     * @var array
+     */
+    protected $configs;
+
+    /**
+     * Slim App
+     *
+     * @var SlimApp
+     */
+    protected $slimApp;
+
+    /**
+     * Response
+     *
+     * @var ResponseInterface
+     */
+    protected $response;
+
+
+    /**
+     * App constructor
+     */
+    public function __construct()
+    {
+        static::$instance = $this;
+
+        $this->configs = require configs_path('app.php');
+
+        $this->container = new Container();
+
+        $this->slimApp = new SlimApp((new ResponseFactory()), (new PsrContainer($this->container)));
+
+        $this->response = $this->init();
+
+        return $this;
+    }
 
     /**
      * Get App Instance
@@ -39,16 +82,56 @@ class App extends SlimApp
     }
 
     /**
+     * Get Container
+     *
+     * @return Container
+     */
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
+
+    /**
+     * Get Configs
+     *
+     * @return array
+     */
+    public function getConfigs(): array
+    {
+        return $this->configs;
+    }
+
+    /**
+     * Get Slim App
+     *
+     * @return SlimApp
+     */
+    public function getSlimApp(): SlimApp
+    {
+        return $this->slimApp;
+    }
+
+    /**
+     * Get Response
+     *
+     * @return ResponseInterface
+     */
+    public function getResponse(): ResponseInterface
+    {
+        return $this->response;
+    }
+
+
+    /**
      * Init App
      *
      * @return ResponseInterface
      */
-    public function init(): ResponseInterface
+    protected function init(): ResponseInterface
     {
-        static::$instance = $this;
+        $this->registerConfigs();
 
-        $this->settings = require configs_path('app.php');
-
+        $this->registerServices();
 
         $this->registerMiddlewares();
 
@@ -63,25 +146,51 @@ class App extends SlimApp
 
         $this->setErrorMiddleware($errorHandler);
 
-        $response = $this->handle($request);
+        $this->response = $this->slimApp->handle($request);
 
 
-        $this->registerResponseEmitters($response);
+        $this->registerResponseEmitters($this->response);
 
-        return $response;
+        return $this->response;
     }
 
+    /**
+     * Register Configs
+     */
+    protected function registerConfigs(): void
+    {
+        $this->container['settings'] = $this->configs;
+    }
+
+    /**
+     * Register Services
+     */
+    protected function registerServices(): void
+    {
+        $services = $this->configs['services'];
+
+        if (is_array($services) && !empty($services)) {
+            foreach ($services as $service) {
+                /**
+                 * @var $instance ServiceProviderInterface
+                 */
+                $instance = new $service();
+
+                $this->container[$instance->name()] = $instance->register($this->container);
+            }
+        }
+    }
 
     /**
      * Register Middlewares
      */
     protected function registerMiddlewares(): void
     {
-        $middlewares = $this->settings['middlewares'];
+        $middlewares = $this->configs['middlewares'];
 
         if (is_array($middlewares) && !empty($middlewares)) {
             foreach ($middlewares as $middleware) {
-                $this->add($middleware);
+                $this->slimApp->add($middleware);
             }
         }
     }
@@ -91,6 +200,8 @@ class App extends SlimApp
      */
     protected function registerRoutes(): void
     {
+        $app = $this->slimApp;
+
         require app_path('Routes/app.php');
     }
 
@@ -101,9 +212,8 @@ class App extends SlimApp
      */
     protected function getRequestObject(): ServerRequestInterface
     {
-        $serverRequestCreator = ServerRequestCreatorFactory::create();
-
-        return $serverRequestCreator->createServerRequestFromGlobals();
+        return ServerRequestCreatorFactory::create()
+            ->createServerRequestFromGlobals();
     }
 
     /**
@@ -113,13 +223,11 @@ class App extends SlimApp
      */
     protected function setErrorHandler(): SlimErrorHandler
     {
-        $errorHandler = $this->settings['errorHandler'];
-
-        $responseFactory = $this->getResponseFactory();
-
-        $logger = $this->container->get(LoggerInterface::class);
-
-        return new $errorHandler($this->getCallableResolver(), $responseFactory, $logger);
+        return new $this->configs['errorHandler'](
+            $this->slimApp->getCallableResolver(),
+            $this->slimApp->getResponseFactory(),
+            $this->container[LoggerInterface::class]
+        );
     }
 
     /**
@@ -130,14 +238,12 @@ class App extends SlimApp
      */
     protected function setShutdownHandler(ServerRequestInterface $request, SlimErrorHandler $errorHandler): void
     {
-        $settings = $this->settings;
-
-        $shutdownHandler = new $settings['shutdownHandler'](
+        $shutdownHandler = new $this->configs['shutdownHandler'](
             $request,
             $errorHandler,
-            $settings['displayErrorDetails'],
-            $settings['logErrors'],
-            $settings['logErrorDetails']
+            $this->configs['displayErrorDetails'],
+            $this->configs['logErrors'],
+            $this->configs['logErrorDetails']
         );
 
         register_shutdown_function($shutdownHandler);
@@ -150,9 +256,11 @@ class App extends SlimApp
      */
     protected function setErrorMiddleware(SlimErrorHandler $errorHandler): void
     {
-        $displayErrorDetails = $this->settings['displayErrorDetails'];
-
-        $errorMiddleware = $this->addErrorMiddleware($displayErrorDetails, true, true);
+        $errorMiddleware = $this->slimApp->addErrorMiddleware(
+            $this->configs['displayErrorDetails'],
+            $this->configs['logErrors'],
+            $this->configs['logErrorDetails']
+        );
 
         $errorMiddleware->setDefaultErrorHandler($errorHandler);
     }
@@ -164,7 +272,7 @@ class App extends SlimApp
      */
     protected function registerResponseEmitters(ResponseInterface $response): void
     {
-        $emitters = $this->settings['emitters'];
+        $emitters = $this->configs['emitters'];
 
         if (is_array($emitters) && !empty($emitters)) {
             foreach ($emitters as $emitter) {

@@ -22,7 +22,7 @@
         "ext-json": "*",
         "slim/slim": "^4.5",
         "slim/psr7": "^1.0",
-        "php-di/php-di": "^6.0",
+        "pimple/pimple": "^3.3",
         "vlucas/phpdotenv": "^4.1",
         "monolog/monolog": "^2.0"
     },

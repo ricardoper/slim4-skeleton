@@ -7,8 +7,8 @@ This skeleton is very customizable with a sane and organized folder structure. T
 This skeleton application was built for Composer. This makes setting up a new Slim Framework v4 application quick and easy.
 
 - PHP >= 7.2
-
 - Customizable with easy configuration:
+  + Logger
   + Routes
   + Configs
   + Middlewares
@@ -16,11 +16,11 @@ This skeleton application was built for Composer. This makes setting up a new Sl
   + Response Emitters
   + Error Handler
   + Shutdown Handler
-
 - Controllers
 - Global Helpers
 - [Monolog](https://github.com/Seldaek/monolog) Logging
 - Environment variables with [PHP dotenv](https://github.com/vlucas/phpdotenv)
+- [Pimple](https://pimple.symfony.com/) Dependency Injection Container
 - [ddumper](https://github.com/ricardoper/ddumper) (based on [Symfony VarDumper](https://github.com/symfony/var-dumper))
 
 ## How to install this skeleton
@@ -70,17 +70,30 @@ You can add as many *Controllers* as you want in a clean way (```/app/Controller
 After add your *Controller*, you can enable or disable it in your *Routes*.
 
 ```php
-use App\Controllers\Demo\HelloController;
-use App\Controllers\Demo\HomeController;
-use App\Kernel\App\App;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
-/**
- * @var $this App
- */
+class HomeController
+{
 
-$this->get('/', [(new HomeController()), 'index']);
+    /**
+     * Index Action
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function index(Request $request, Response $response): Response
+    {
+        unset($request);
 
-$this->get('/hello/{name}', [(new HelloController()), 'index']);
+        $data = ['Hello' => 'World!'];
+
+        $response->getBody()->write(json_encode($data));
+
+        return $response;
+    }
+}
 ```
 
 ## Response Emitters
@@ -140,6 +153,8 @@ You can add as many *Services Providers* as you want in a clean way (```/app/Ser
 
 After add your *Services Provider*, you can enable or disable it in ```config/services.php``` configuration file.
 
+**NOTE**: **Logger** is a Service Provider, it can be customized as any other Service Provider.
+
 ```php
 use App\Services\Demo\ExampleServiceProvider;
 
@@ -156,7 +171,7 @@ Service Provider Example:
 ```php
 use App\Kernel\ServiceProviderInterface;
 use Closure;
-use Psr\Container\ContainerInterface;
+use Pimple\Container;
 
 class ExampleServiceProvider implements ServiceProviderInterface
 {
@@ -171,10 +186,15 @@ class ExampleServiceProvider implements ServiceProviderInterface
 
     /**
      * Register new service on dependency container
+     *
+     * @param Container $c
+     * @return Closure
      */
-    public function register(): Closure
+    public function register(Container $c): Closure
     {
-        return function (ContainerInterface $c) {
+        return function (Container $c) {
+            unset($c);
+
             return new Example();
         };
     }
@@ -186,6 +206,20 @@ class ExampleServiceProvider implements ServiceProviderInterface
 You can add as many routes files as you want (```/app/Routes```), but you need to enable these files in ```/apps/Routes/app.php``` file.
 
 You can organize this routes as you like. This skeleton have a little Demo that you can see how to organize this files.
+
+```php
+use App\Controllers\Demo\HelloController;
+use App\Controllers\Demo\HomeController;
+use Slim\App;
+
+/**
+ * @var $app App
+ */
+
+$app->get('/', [(new HomeController()), 'index']);
+
+$app->get('/hello/{name}', [(new HelloController()), 'index']);
+```
 
 ## Configurations
 
@@ -221,14 +255,6 @@ To get the **best performance** there are some configurations to pay attention. 
 - *APP_IN_PROD* - *inProd* - *bool* - Set it to ```true``` when your app is ready to run in production.
 - *APP_IN_DOCKER* - *inDocker* - *bool* - ```true``` If your app is running in Docker and you want to output logs in console, ```false``` to output logs via Monolog.
 
-**NOTE**: When *APP_IN_PROD* or *inProd* is set to ```true```, this skeleton will enable PHP-DI Compilation automatically. You can get more details in [PHP-DI Performances](http://php-di.org/doc/performances.html):
-
-> Deployment in production:
-> 
-> When a container is configured to be compiled, it will be compiled once and never be regenerated again. That allows for maximum performances in production.
-> 
-> When you deploy new versions of your code to production you must delete the generated file (or the directory that contains it) to ensure that the container is re-compiled.
-
 ## Benchmarks
 
 Nothing is free, so let's compare the performance loss with Slim Skeleton.
@@ -239,6 +265,7 @@ Intel® Core™ i5-8400 CPU @ 2.80GHz × 6<br>
 SSD<br>
 
 **Versions:**<br/>
+Ubuntu 20.04 LTS<br/>
 Docker v19.03.8<br>
 nginx 1.17.10<br/>
 PHP v7.4.3<br/>
@@ -256,15 +283,15 @@ Command: siege -c25 -b -r500 "URL"<br/>
 | --- | :----: | :---: |
 | Transactions | 12500 hits | 12500 hits |
 | Availability | 100.00 % | 100.00 % |
-| Elapsed time | 9.90 secs | 9.05 secs |
-| Data transferred | 0.45 MB | 0.38 MB |
+| Elapsed time | 9.16 secs | 8.80 secs |
+| Data transferred | 0.45 MB | 0.45 MB |
 | Response time | 0.02 secs | 0.02 secs |
-| Transaction rate | 1262.63 trans/sec | 1381.22 trans/sec |
-| Throughput | 0.05 MB/sec | 0.04 MB/sec |
-| Concurrency | 24.54 | 24.48 |
+| Transaction rate | 1364.63 trans/sec | 1420.45 trans/sec |
+| Throughput | 0.05 MB/sec | 0.05 MB/sec |
+| Concurrency | 24.49 | 24.51|
 | Successful transactions | 12500 | 12500 |
 | Failed transactions | 0 | 0 |
-| Longest transaction | 0.06 | 0.09 |
+| Longest transaction | 0.05 | 0.05 |
 | Shortest transaction | 0.00 | 0.00 |
 <br/>
 
