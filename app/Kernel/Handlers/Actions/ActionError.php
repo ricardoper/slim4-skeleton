@@ -8,6 +8,17 @@ use JsonSerializable;
 class ActionError implements JsonSerializable
 {
 
+    /**
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * @var string
+     */
+    protected $description;
+
+
     public const BAD_REQUEST = 'BAD_REQUEST';
     public const INSUFFICIENT_PRIVILEGES = 'INSUFFICIENT_PRIVILEGES';
     public const NOT_ALLOWED = 'NOT_ALLOWED';
@@ -18,15 +29,6 @@ class ActionError implements JsonSerializable
     public const VALIDATION_ERROR = 'VALIDATION_ERROR';
     public const VERIFICATION_ERROR = 'VERIFICATION_ERROR';
 
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $description;
 
     /**
      * @param string $type
@@ -53,6 +55,7 @@ class ActionError implements JsonSerializable
     public function setType(string $type): self
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -71,6 +74,7 @@ class ActionError implements JsonSerializable
     public function setDescription(?string $description = null): self
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -79,11 +83,9 @@ class ActionError implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        $payload = [
+        return [
             'type' => $this->type,
             'description' => $this->description,
         ];
-
-        return $payload;
     }
 }

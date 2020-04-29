@@ -239,12 +239,14 @@ class App
      */
     protected function setShutdownHandler(ServerRequestInterface $request, SlimErrorHandler $errorHandler): void
     {
-        $shutdownHandler = new $this->configs['shutdownHandler'](
+        $configs = $this->configs;
+
+        $shutdownHandler = new $configs['shutdownHandler'](
             $request,
             $errorHandler,
-            $this->configs['displayErrorDetails'],
-            $this->configs['logErrors'],
-            $this->configs['logErrorDetails']
+            $configs['displayErrorDetails'],
+            $configs['logErrors'],
+            $configs['logErrorDetails']
         );
 
         register_shutdown_function($shutdownHandler);
@@ -257,10 +259,12 @@ class App
      */
     protected function setErrorMiddleware(SlimErrorHandler $errorHandler): void
     {
+        $configs = $this->configs;
+
         $errorMiddleware = $this->slimApp->addErrorMiddleware(
-            $this->configs['displayErrorDetails'],
-            $this->configs['logErrors'],
-            $this->configs['logErrorDetails']
+            $configs['displayErrorDetails'],
+            $configs['logErrors'],
+            $configs['logErrorDetails']
         );
 
         $errorMiddleware->setDefaultErrorHandler($errorHandler);

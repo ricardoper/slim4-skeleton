@@ -11,17 +11,18 @@ class ActionPayload implements JsonSerializable
     /**
      * @var int
      */
-    private $statusCode;
+    protected $statusCode;
 
     /**
      * @var array|object|null
      */
-    private $data;
+    protected $data;
 
     /**
      * @var ActionError|null
      */
-    private $error;
+    protected $error;
+
 
     /**
      * @param int $statusCode

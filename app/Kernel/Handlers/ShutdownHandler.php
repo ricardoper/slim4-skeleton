@@ -13,27 +13,28 @@ class ShutdownHandler
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * @var HttpErrorHandler
      */
-    private $errorHandler;
+    protected $errorHandler;
 
     /**
      * @var bool
      */
-    private $displayErrorDetails;
+    protected $displayErrorDetails;
 
     /**
      * @var bool
      */
-    private $logErrors;
+    protected $logErrors;
 
     /**
      * @var bool
      */
-    private $logErrorDetails;
+    protected $logErrorDetails;
+
 
     /**
      * ShutdownHandler constructor.
@@ -63,6 +64,7 @@ class ShutdownHandler
     public function __invoke(): void
     {
         $error = error_get_last();
+
         if ($error) {
             $errorFile = $error['file'];
             $errorLine = $error['line'];
