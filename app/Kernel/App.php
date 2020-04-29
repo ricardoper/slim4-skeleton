@@ -227,7 +227,7 @@ class App
         return new $this->configs['errorHandler'](
             $this->slimApp->getCallableResolver(),
             $this->slimApp->getResponseFactory(),
-            $this->container[LoggerInterface::class]
+            $this->container[LoggerInterface::class] ?? null
         );
     }
 
