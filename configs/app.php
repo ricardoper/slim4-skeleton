@@ -6,16 +6,12 @@ use App\Kernel\Handlers\ShutdownHandler;
 
 return [
 
-    // Deployment //
-    'inProd'  => env('APP_IN_PROD', false),
-    'inDocker'  => env('APP_IN_DOCKER', false),
-
-
     // Debugging //
     'debug' => env('APP_DEBUG', false),
     'logErrors' => env('LOG_ERRORS', true),
     'logErrorDetails' => env('LOG_ERRORS_DETAILS', true),
     'displayErrorDetails' => env('APP_DEBUG', false),
+    'logToOutput'  => env('LOG_TO_OUTPUT', false),
 
 
     // Handlers //

@@ -202,6 +202,8 @@ class App
         $app = $this->slimApp;
 
         require app_path('Routes/app.php');
+
+        unset($app);
     }
 
     /**

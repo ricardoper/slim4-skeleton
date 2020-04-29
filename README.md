@@ -243,17 +243,13 @@ You can set this parameters in ```/.env``` file you overwrite the ```/configs/ap
 
 *LOG_ERRORS_DETAILS* - *logErrorDetails* - *bool* - Enable/Disable extra details in the logging file
 
+*APP_IN_DOCKER* - *inDocker* - *bool* - ```true``` to output the logs in console, ```false``` to output logs in file.
+
 ## Debugging
 
 Debugging is disabled by default. You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```.
 
 *APP_DEBUG* - *displayErrorDetails* - *bool* - Enable/Disable debugging
-
-## Deployment
-
-To get the **best performance** there are some configurations to pay attention. You can set this parameters in ```/.env``` file you overwrite the ```/configs/app.php```.
-- *APP_IN_PROD* - *inProd* - *bool* - Set it to ```true``` when your app is ready to run in production.
-- *APP_IN_DOCKER* - *inDocker* - *bool* - ```true``` If your app is running in Docker and you want to output logs in console, ```false``` to output logs via Monolog.
 
 ## Benchmarks
 
