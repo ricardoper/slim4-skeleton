@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Kernel\Handlers;
+namespace App\Handlers;
 
-use App\Kernel\Handlers\Actions\ActionError;
-use App\Kernel\Handlers\Actions\ActionPayload;
+use App\Handlers\Actions\ActionError;
+use App\Handlers\Actions\ActionPayload;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -18,7 +18,7 @@ use Slim\Exception\HttpUnauthorizedException;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
 use Throwable;
 
-class HttpErrorHandler extends SlimErrorHandler
+class ErrorHandler extends SlimErrorHandler
 {
 
     /**

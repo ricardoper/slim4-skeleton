@@ -61,9 +61,11 @@ class App
 
         $this->configs = require configs_path('app.php');
 
-        $this->container = new Container();
+        $container = $this->container = new Container();
 
-        $this->slimApp = new SlimApp((new ResponseFactory()), (new PsrContainer($this->container)));
+        $container['app'] = $this;
+
+        $this->slimApp = new SlimApp((new ResponseFactory()), (new PsrContainer($container)));
 
         $this->response = $this->init();
 
@@ -130,6 +132,8 @@ class App
     {
         $this->registerConfigs();
 
+        $this->setRouteStrategy();
+
         $this->registerServices();
 
         $this->registerMiddlewares();
@@ -159,6 +163,16 @@ class App
     protected function registerConfigs(): void
     {
         $this->container['settings'] = $this->configs;
+    }
+
+    /**
+     * Set Route Strategy
+     */
+    protected function setRouteStrategy(): void
+    {
+        $routeCollector = $this->slimApp->getRouteCollector();
+
+        $routeCollector->setDefaultInvocationStrategy(new RouteStrategy());
     }
 
     /**
@@ -277,7 +291,7 @@ class App
      */
     protected function registerResponseEmitters(ResponseInterface $response): void
     {
-        $emitters = $this->configs['emitters'];
+        $emitters = $this->container['settings']['emitters'];
 
         if (is_array($emitters) && !empty($emitters)) {
             foreach ($emitters as $emitter) {

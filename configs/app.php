@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use App\Kernel\Handlers\HttpErrorHandler;
-use App\Kernel\Handlers\ShutdownHandler;
+use App\Handlers\ErrorHandler;
+use App\Handlers\ShutdownHandler;
 
 return [
 
@@ -15,7 +15,7 @@ return [
 
 
     // Handlers //
-    'errorHandler' => HttpErrorHandler::class,
+    'errorHandler' => ErrorHandler::class,
     'shutdownHandler' => ShutdownHandler::class,
 
 

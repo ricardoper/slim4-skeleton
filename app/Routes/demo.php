@@ -13,4 +13,4 @@ $app->get('/', [(new HomeController()), 'index']);
 
 $app->get('/dump', [(new HomeController()), 'dump']);
 
-$app->get('/hello/{name}', [(new HelloController()), 'index']);
+$app->get('/hello/{name}', [(new HelloController()), 'index'])->setName('jsonHello');

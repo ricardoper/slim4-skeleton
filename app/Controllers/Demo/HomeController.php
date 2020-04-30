@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controllers\Demo;
 
+use App\Emitters\PlainResponseEmitter;
+use App\Kernel\Controllers\ControllerAbstract;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class HomeController
+class HomeController extends ControllerAbstract
 {
 
     /**
@@ -18,35 +20,50 @@ class HomeController
      */
     public function index(Request $request, Response $response): Response
     {
-        unset($request);
+        unset($request, $response);
 
         $data = ['Hello' => 'World!'];
 
-        $response->getBody()->write(json_encode($data));
-
-        return $response;
+        return $this->json($data);
     }
 
     /**
      * Dump Action
      *
+     * Example action to know the ways to obtain data
+     *
      * @param Request $request
      * @param Response $response
+     * @param array $arguments )
      * @return Response
      */
-    public function dump(Request $request, Response $response): void
+    public function dump(Request $request, Response $response, array $arguments): Response
     {
-        unset($request, $response);
+        $app = app();
+        $app = $this->getApp();
 
-        d(app());
+        $container = container();
+        $exampleService = container('example');
 
-        d(container());
+        $container = $this->getContainer();
+        $exampleService = $this->getContainer('example');
 
-        d(container('example'));
+        $exampleService = $this->getService('example');
 
-        d(configs());
-        d(configs('services'));
+        $configs = configs();
+        $viewsConfigs = configs('views');
 
-        dde(env('LOG_ERRORS', false));
+        $configs = $this->getConfigs();
+        $loggerConfigs = $this->getConfigs('logger');
+
+        $logErrorsEnv = env('LOG_ERRORS', false);
+
+        // Add Emmiter //
+        $this->setEmitter(PlainResponseEmitter::class);
+
+        unset($request, $response, $arguments, $app, $container, $exampleService, $configs, $viewsConfigs, $logErrorsEnv);
+
+        $this->write('Please, ');
+        return $this->write('see the source code of this action.');
     }
 }

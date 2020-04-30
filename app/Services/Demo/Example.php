@@ -7,13 +7,24 @@ class Example
 {
 
     /**
-     * Data example
+     * Capitalize Name
+     *
+     * @param string $name
+     * @return string
+     */
+    public function capName(string $name): string
+    {
+        return ucwords($name);
+    }
+
+    /**
+     * To Json
      *
      * @param string $name
      * @return array
      */
-    public function data(string $name): array
+    public function toJson(string $name): array
     {
-        return ['Hello' => ucwords($name)];
+        return ['Hello' => $this->capName($name)];
     }
 }

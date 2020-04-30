@@ -34,7 +34,7 @@ if (!function_exists('container')) {
 
 if (!function_exists('configs')) {
     /**
-     * Get Config
+     * Get Configs
      *
      * @param string|null $name
      * @param mixed $default

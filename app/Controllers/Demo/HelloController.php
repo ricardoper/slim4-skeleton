@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controllers\Demo;
 
+use App\Kernel\Controllers\ControllerAbstract;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class HelloController
+class HelloController extends ControllerAbstract
 {
 
     /**
@@ -19,12 +20,10 @@ class HelloController
      */
     public function index(Request $request, Response $response, $arguments): Response
     {
-        unset($request);
+        unset($request, $response);
 
-        $data = container('example')->data($arguments['name']);
+        $data = container('example')->toJson($arguments['name']);
 
-        $response->getBody()->write(json_encode($data));
-
-        return $response;
+        return $this->json($data);
     }
 }

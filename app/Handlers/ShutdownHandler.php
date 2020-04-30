@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Kernel\Handlers;
+namespace App\Handlers;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -16,7 +16,7 @@ class ShutdownHandler
     protected $request;
 
     /**
-     * @var HttpErrorHandler
+     * @var ErrorHandler
      */
     protected $errorHandler;
 
@@ -45,7 +45,7 @@ class ShutdownHandler
      */
     public function __construct(
         Request $request,
-        HttpErrorHandler $errorHandler,
+        ErrorHandler $errorHandler,
         bool $displayErrorDetails,
         bool $logErrors,
         bool $logErrorDetails
@@ -115,9 +115,7 @@ class ShutdownHandler
      */
     protected function registerResponseEmitters(ResponseInterface $response): void
     {
-        $settings = require configs_path('app.php');
-
-        $emitters = $settings['emitters'];
+        $emitters = container('settings')['emitters'];
 
         if (is_array($emitters) && !empty($emitters)) {
             foreach ($emitters as $emitter) {
