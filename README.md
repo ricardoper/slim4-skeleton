@@ -4,6 +4,8 @@ Use this skeleton application to quickly setup and start working on a new Slim F
 
 This skeleton is very customizable with a sane and organized folder structure. The code is simpler to understand too.
 
+**NOTE**: If you want this skeleton **with Twig**, go to: (https://github.com/ricardoper/slim4-twig-skeleton).
+
 This skeleton application is built for Composer. These makes setting up a new Slim Framework v4 application quick and easy.
 
 - PHP >= 7.2
