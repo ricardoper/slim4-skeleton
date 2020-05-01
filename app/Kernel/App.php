@@ -199,7 +199,7 @@ class App
      */
     protected function registerMiddlewares(): void
     {
-        $middlewares = $this->configs['middlewares'];
+        $middlewares = array_reverse($this->configs['middlewares']);
 
         if (is_array($middlewares) && !empty($middlewares)) {
             foreach ($middlewares as $middleware) {
