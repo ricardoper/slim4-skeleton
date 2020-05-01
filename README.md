@@ -4,10 +4,10 @@ Use this skeleton application to quickly setup and start working on a new Slim F
 
 This skeleton is very customizable with a sane and organized folder structure. The code is simpler to understand too.
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework v4 application quick and easy.
+This skeleton application is built for Composer. These makes setting up a new Slim Framework v4 application quick and easy.
 
 - PHP >= 7.2
-- Customizable with easy configuration:
+- Customizable with an easy configuration:
   + Logger
   + Routes
   + Configs
@@ -66,7 +66,7 @@ Replace `[my-app-name]`with the desired directory name for your new application.
 
 ## Controllers
 
-You can add as many *Controllers* as you want in a clean way (`/app/Controllers`).
+You can add as many *Controllers* as you want in a cleaning way (`/app/Controllers`).
 
 After add your *Controller*, you can enable or disable it in your *Routes*.
 
@@ -112,7 +112,7 @@ class HomeController extends ControllerAbstract
 
 ## Response Emitters
 
-You can add as many **global** *Response Emitters* as you want in a clean way (`/app/Emitters`).
+You can add as many **global** *Response Emitters* as you want in a cleaning way (`/app/Emitters`).
 
 After add your **global** *Response Emitter*, you can enable or disable it in `config/emitters.php` configuration file.
 
@@ -130,7 +130,7 @@ return [
 
 ## Handlers
 
-You can override the following Handlers in a clean way (`/app/Handlers`):
+You can override the following Handlers in a cleaning way (`/app/Handlers`):
 - *ErrorHandler* (default locatedl in `/app/Handlers/ErrorHandler`)
 - *ShutdownHandler* (default locatedl in `/app/Handlers/ShutdownHandler`)
 
@@ -149,7 +149,7 @@ return [
 
 ## Middlewares
 
-You can add as many *Middlewares* as you want in a clean way (`/app/Middlewares`).
+You can add as many *Middlewares* as you want in a cleaning way (`/app/Middlewares`).
 
 After add your *Middleware*, you can enable or disable it in `config/middlewares.php` configuration file.
 
@@ -165,7 +165,7 @@ return [
 
 ## Services Providers
 
-You can add as many *Services Providers* as you want in a clean way (`/app/Services`).
+You can add as many *Services Providers* as you want in a cleaning way (`/app/Services`).
 
 After add your *Services Provider*, you can enable or disable it in `config/services.php` configuration file.
 
@@ -221,7 +221,7 @@ class ExampleServiceProvider implements ServiceProviderInterface
 
 You can add as many routes files as you want (`/app/Routes`), but you need to enable these files in `/apps/Routes/app.php` file.
 
-You can organize this routes as you like. This skeleton have a little Demo that you can see how to organize this files.
+You can organize this routes as you like. This skeleton has a little Demo that you can see how to organize this files.
 
 ```php
 use App\Controllers\Demo\HelloController;
@@ -245,7 +245,7 @@ You can add as many configurations files as you want (`/config`), but you need t
 
 ## Demo
 
-This skeleton have a little Demo that you can see all this points in action.
+This skeleton has a little Demo that you can see all this points in action.
 
 Demo URL's:
 - /
