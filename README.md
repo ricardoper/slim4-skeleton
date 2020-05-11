@@ -62,7 +62,7 @@ Replace `[my-app-name]`with the desired directory name for your new application.
 - `public_path(string $path)` - Returns *public path* location
 - `storage_path(string $path)` - Returns *storage path* location
 - `d($var1, $var2, ...)` - Dump vars in colapsed mode by default
-- `dd($var1, $var2, ...)` - Dump & die vars in colapsed mode by default
+- `ddd($var1, $var2, ...)` - Dump & die vars in colapsed mode by default
 - `de($var1, $var2, ...)` - Dump vars in expanded mode by default
 - `dde($var1, $var2, ...)` - Dump & die vars in expanded mode by default
 
