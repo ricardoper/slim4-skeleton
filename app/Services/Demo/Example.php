@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Services\Demo;
 
+use App\Kernel\Exceptions\ServiceException;
+
 class Example
 {
 
@@ -26,5 +28,15 @@ class Example
     public function toJson(string $name): array
     {
         return ['Hello' => $this->capName($name)];
+    }
+
+    /**
+     * Service Exception
+     *
+     * @throws ServiceException
+     */
+    public function exception(): void
+    {
+        throw new ServiceException('Example Exception');
     }
 }

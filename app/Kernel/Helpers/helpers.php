@@ -37,7 +37,7 @@ if (!function_exists('configs')) {
      * Get Configs
      *
      * @param string|null $name
-     * @param mixed $default
+     * @param mixed|null $default
      * @return mixed|null
      */
     function configs(string $name = null, $default = null)
@@ -50,7 +50,7 @@ if (!function_exists('configs')) {
             return $default;
         }
 
-        return $configs[$name] ?? $default;
+        return $configs->get($name) ?? $default;
     }
 }
 
@@ -108,7 +108,7 @@ if (!function_exists('base_path')) {
             $path = '/' . $path;
         }
 
-        return dirname(__DIR__) . $path;
+        return realpath(__DIR__ . '/../../..') . $path;
     }
 }
 

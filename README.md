@@ -74,7 +74,7 @@ After add your *Controller*, you can enable or disable it in your *Routes*.
 
 ```php
 use App\Emitters\PlainResponseEmitter;
-use App\Kernel\Controllers\ControllerAbstract;
+use App\Kernel\ControllerAbstract;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

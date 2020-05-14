@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Services\Demo;
+namespace App\Kernel\Services\Configs;
 
 use App\Kernel\Interfaces\ServiceProviderInterface;
 use Pimple\Container;
 
-class ExampleServiceProvider implements ServiceProviderInterface
+class ConfigsServiceProvider implements ServiceProviderInterface
 {
 
     /**
@@ -14,7 +14,7 @@ class ExampleServiceProvider implements ServiceProviderInterface
      */
     public function name(): string
     {
-        return 'example';
+        return 'configs';
     }
 
     /**
@@ -25,10 +25,6 @@ class ExampleServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        return function (Container $c) {
-            unset($c);
-
-            return new Example();
-        };
+        return new Configs($container);
     }
 }

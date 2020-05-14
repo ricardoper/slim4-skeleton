@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Kernel;
+namespace App\Kernel\Interfaces;
 
-use Closure;
 use Pimple\Container;
 
 interface ServiceProviderInterface
@@ -17,8 +16,8 @@ interface ServiceProviderInterface
     /**
      * Register new service on dependency container
      *
-     * @param Container $c
-     * @return Closure
+     * @param Container $container
+     * @return mixed
      */
-    public function register(Container $c): Closure;
+    public function register(Container $container);
 }

@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Services\Logger;
+namespace App\Kernel\Services\Logger;
 
-use App\Kernel\ServiceProviderInterface;
-use Closure;
+use App\Kernel\Interfaces\ServiceProviderInterface;
 use Pimple\Container;
 use Psr\Log\LoggerInterface;
 
@@ -22,13 +21,13 @@ class LoggerServiceProvider implements ServiceProviderInterface
     /**
      * Register new service on dependency container
      *
-     * @param Container $c
-     * @return Closure
+     * @param Container $container
+     * @return mixed
      */
-    public function register(Container $c): Closure
+    public function register(Container $container)
     {
-        return function (Container $c) {
-            return (new Logger())->build($c);
+        return function (Container $container) {
+            return (new Logger())->builder($container);
         };
     }
 }

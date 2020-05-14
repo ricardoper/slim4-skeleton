@@ -24,7 +24,8 @@
         "slim/psr7": "^1.0",
         "pimple/pimple": "^3.3",
         "vlucas/phpdotenv": "^4.1",
-        "monolog/monolog": "^2.0"
+        "monolog/monolog": "^2.0",
+        "catfan/medoo": "^1.7"
     },
     "require-dev": {
         "ricardoper/ddumper": "^1.1"
@@ -34,7 +35,8 @@
             "App\\": "app/"
         },
         "files": [
-            "bootstrap/helpers.php"
+            "app/Kernel/Helpers/helpers.php",
+            "app/Kernel/Helpers/arrayHelpers.php"
         ]
     },
     "config": {

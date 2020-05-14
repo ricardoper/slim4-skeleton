@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Controllers\Demo;
 
 use App\Emitters\PlainResponseEmitter;
-use App\Kernel\Controllers\ControllerAbstract;
+use App\Kernel\Abstracts\ControllerAbstract;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -51,10 +51,12 @@ class HomeController extends ControllerAbstract
         $exampleService = $this->getService('example');
 
         $configs = configs();
-        $viewsConfigs = configs('views');
+        $appConfigs = configs('app');
+        $appEnvConfig = configs('app.env');
 
         $configs = $this->getConfigs();
         $loggerConfigs = $this->getConfigs('logger');
+        $loggerNameConfig = $this->getConfigs('logger.name');
 
         $logErrorsEnv = env('LOG_ERRORS', false);
 

@@ -1,14 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Kernel\Controllers;
+namespace App\Kernel\Abstracts;
 
-use App\Emitters\JsonResponseEmitter;
 use App\Kernel\App;
 use Pimple\Container;
-use Psr\Http\Message\ResponseInterface as Response;
 
-abstract class ControllerAbstract
+abstract class KernelAbstract
 {
 
     /**
@@ -88,7 +86,7 @@ abstract class ControllerAbstract
             return $default;
         }
 
-        return $configs[$name] ?? $default;
+        return $configs->get($name) ?? $default;
     }
 
     /**
@@ -100,64 +98,5 @@ abstract class ControllerAbstract
     protected function getService(string $name)
     {
         return $this->container[$name] ?? null;
-    }
-
-    /**
-     * Get Response
-     *
-     * @return Response
-     */
-    protected function getResponse(): Response
-    {
-        return $this->container['response'];
-    }
-
-    /**
-     * Set Emitter
-     *
-     * @param string $emitter
-     */
-    protected function setEmitter(string $emitter): void
-    {
-        $settings = $this->container['settings'];
-
-        $settings['emitters'] = array_merge($settings['emitters'], [$emitter]);
-
-        $this->container['settings'] = $settings;
-    }
-
-    /**
-     * Write Text Plain
-     *
-     * @param string $data
-     * @return Response
-     */
-    public function write(string $data): Response
-    {
-        $response = $this->getResponse();
-
-        $response->getBody()->write($data);
-
-        return $response;
-    }
-
-    /**
-     * Returns Json Encoded
-     *
-     * @param array $data
-     * @param bool $sendHeaders
-     * @return Response
-     */
-    public function json(array $data, bool $sendHeaders = true): Response
-    {
-        $response = $this->getResponse();
-
-        $response->getBody()->write(json_encode($data));
-
-        if ($sendHeaders === true) {
-            $this->setEmitter(JsonResponseEmitter::class);
-        }
-
-        return $response;
     }
 }

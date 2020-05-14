@@ -116,7 +116,7 @@ class ShutdownHandler
      */
     protected function registerResponseEmitters(ResponseInterface $response): void
     {
-        $emitters = container('settings')['emitters'];
+        $emitters = configs('emitters');
 
         if (is_array($emitters) && !empty($emitters)) {
             foreach ($emitters as $emitter) {

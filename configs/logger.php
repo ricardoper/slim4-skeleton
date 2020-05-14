@@ -5,7 +5,10 @@ use Monolog\Logger;
 
 return [
 
+    // Logger //
     'name' => 'app',
     'path' => env('LOG_TO_OUTPUT', false) === true ? 'php://stdout' : storage_path('logs/app.log'),
     'level' => Logger::DEBUG,
+    'maxFiles' => 7,
+
 ];

@@ -3,26 +3,23 @@ declare(strict_types=1);
 
 namespace App\Emitters;
 
+use App\Kernel\Interfaces\ResponseEmitterInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\ResponseEmitter as SlimResponseEmitter;
 
-class PlainResponseEmitter extends SlimResponseEmitter
+class PlainResponseEmitter implements ResponseEmitterInterface
 {
 
     /**
-     * Send the response the client
+     * Send the response to the client
      *
      * @param ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function emit(ResponseInterface $response): void
+    public function emit(ResponseInterface $response): ResponseInterface
     {
         $response = $response
             ->withHeader('Content-Type', 'text/plain; charset=UTF-8');
 
-        if (ob_get_contents()) {
-            ob_clean();
-        }
-
-        parent::emit($response);
+        return $response;
     }
 }
