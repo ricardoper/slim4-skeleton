@@ -6,7 +6,7 @@ use App\Services\Demo\ExampleServiceProvider;
 
 return [
 
-    DatabaseServiceProvider::class,
+    // DatabaseServiceProvider::class,
 
     ExampleServiceProvider::class,
 
