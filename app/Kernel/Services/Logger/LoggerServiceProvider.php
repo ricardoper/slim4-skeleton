@@ -27,7 +27,7 @@ class LoggerServiceProvider implements ServiceProviderInterface
     public function register(Container $container)
     {
         return function (Container $container) {
-            return (new Logger())->builder($container);
+            return new Logger($container);
         };
     }
 }

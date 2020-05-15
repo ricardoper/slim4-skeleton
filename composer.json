@@ -20,15 +20,14 @@
     "require": {
         "php": "^7.2",
         "ext-json": "*",
+        "psr/log": "^1.1",
         "slim/slim": "^4.5",
-        "slim/psr7": "^1.0",
+        "slim/psr7": "^1.1",
         "pimple/pimple": "^3.3",
-        "vlucas/phpdotenv": "^4.1",
-        "monolog/monolog": "^2.0",
-        "catfan/medoo": "^1.7"
+        "vlucas/phpdotenv": "^4.1"
     },
     "require-dev": {
-        "ricardoper/ddumper": "^1.1"
+        "ricardoper/ddumper": "^1.2"
     },
     "autoload": {
         "psr-4": {
@@ -38,6 +37,15 @@
             "app/Kernel/Helpers/helpers.php",
             "app/Kernel/Helpers/arrayHelpers.php"
         ]
+    },
+    "suggest": {
+        "ext-pdo_mysql": "For MySQL or MariaDB database",
+        "ext-pdo_sqlsrv": "For MSSQL database on both Window/Liunx platform",
+        "ext-pdo_dblib": "For MSSQL or Sybase database on Linux/UNIX platform",
+        "ext-pdo_oci": "For Oracle database",
+        "ext-pdo_oci8": "For Oracle version 8 database",
+        "ext-pdo_pqsql": "For PostgreSQL database",
+        "ext-pdo_sqlite": "For SQLite database"
     },
     "config": {
         "optimize-autoloader": true

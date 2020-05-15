@@ -3,160 +3,153 @@ declare(strict_types=1);
 
 namespace App\Kernel\Services\Logger;
 
+use App\Kernel\Services\Logger\Handlers\HandlerInterface;
+use App\Kernel\Services\Logger\Handlers\RotatingFileHandler;
 use DateTime;
+use DateTimeZone;
 use Exception;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger as MonologLogger;
-use Monolog\Processor\UidProcessor;
 use Pimple\Container;
-use Psr\Log\LoggerInterface;
+use Psr\Log\AbstractLogger;
 
-class Logger
+class Logger extends AbstractLogger
 {
 
     /**
-     * Max rotation files
-     *
-     * @var int
-     */
-    protected $maxFiles = 0;
-
-    /**
-     * File date format
+     * Channel name
      *
      * @var string
      */
-    protected $dateFormat = 'Y-m-d';
+    protected $channel = null;
 
     /**
-     * Filename format
+     * The handler stack
      *
-     * @var string
+     * @var HandlerInterface[]
      */
-    protected $filenameFormat = '{filename}-{date}.log';
+    protected $handlers = [];
 
     /**
-     * Log filename
+     * Logging levels from syslog protocol defined in RFC 5424
      *
-     * @var string
+     * @var int[]
      */
-    protected $filename;
+    protected $levelCodes = [
+        'DEBUG' => 100,
+        'INFO' => 200,
+        'NOTICE' => 250,
+        'WARNING' => 300,
+        'ERROR' => 400,
+        'CRITICAL' => 500,
+        'ALERT' => 550,
+        'EMERGENCY' => 600,
+    ];
+
 
     /**
-     * Timed Log filename
+     * Logger constructor
      *
-     * @var string
-     */
-    protected $timedFilename;
-
-
-    /**
-     * Builder Logger
-     *
+     * Logger constructor.
      * @param Container $container
-     * @return LoggerInterface
      * @throws Exception
      */
-    public function builder(Container $container): LoggerInterface
+    public function __construct(Container $container)
     {
-        $loggerConfigs = $container['configs']->get('logger');
+        $configs = $container['configs']->get('logger');
 
-        $this->maxFiles = $loggerConfigs['maxFiles'];
-        $this->filename = $loggerConfigs['path'];
+        $this->channel = $configs['name'];
 
-        $this->getTimedFilename();
-        $this->rotate();
-
-
-        $logger = new MonologLogger($loggerConfigs['name']);
-
-        $logger->pushProcessor((new UidProcessor()));
-
-        $formatter = new LineFormatter(
-            null,
-            null,
-            true,
-            true
-        );
-
-        $handler = new StreamHandler($this->timedFilename, $loggerConfigs['level']);
-        $handler->setFormatter($formatter);
-        $logger->pushHandler($handler);
-
-        return $logger;
-    }
-
-
-    /**
-     * Get timed filename
-     */
-    protected function getTimedFilename(): void
-    {
-        $date = (new DateTime('now'))->format($this->dateFormat);
-
-        $filename = str_replace('.log', '', basename($this->filename));
-
-        $this->timedFilename = strtr(
-            dirname($this->filename) . '/' . $this->filenameFormat,
-            [
-                '{filename}' => $filename,
-                '{date}' => $date,
-            ]
-        );
+        $this->pushHandler(new RotatingFileHandler($configs['path'], $configs['maxFiles']));
     }
 
     /**
-     * Rotates the files
-     *
-     * @throws Exception
-     */
-    protected function rotate(): void
-    {
-        $filename = $this->timedFilename;
-
-        // Check if rotation is needed
-        if (file_exists($filename)) {
-            return;
-        }
-
-        // Check unlimited files flag
-        if ($this->maxFiles === 0) {
-            return;
-        }
-
-        // Touch log file
-        if (is_writable(dirname($filename))) {
-            touch($filename);
-        }
-
-        // Check if exists files to remove
-        $logFiles = glob($this->getGlobPattern());
-        if ($this->maxFiles >= count($logFiles)) {
-            return;
-        }
-
-        rsort($logFiles);
-
-        // Remove older files
-        foreach (array_slice($logFiles, $this->maxFiles) as $file) {
-            if (file_exists($file)) {
-                unlink($file);
-            }
-        }
-    }
-
-    /**
-     * Get Glob function pattern
+     * Get channel name
      *
      * @return string
      */
-    protected function getGlobPattern(): string
+    public function getChannel(): string
     {
-        $date = (new DateTime('now'))->format($this->dateFormat);
+        return $this->channel;
+    }
 
-        $filename = str_replace([$date, '.log'], '', $this->timedFilename);
+    /**
+     * Set channel name
+     *
+     * @param string $channel
+     */
+    public function setChannel(string $channel): void
+    {
+        $this->channel = $channel;
+    }
 
-        return $filename . '*.log';
+    /**
+     * Pushes a handler on to the stack
+     *
+     * @param HandlerInterface $handler
+     */
+    public function pushHandler(HandlerInterface $handler): void
+    {
+        $this->handlers[get_class($handler)] = $handler;
+    }
+
+    /**
+     * Unload a handler on to the stack
+     *
+     * @param string $handler
+     */
+    public function unloadHandler(string $handler): void
+    {
+        if (!empty($this->handlers[$handler])) {
+            unset($this->handlers[$handler]);
+        }
+    }
+
+    /**
+     * Get handlers
+     *
+     * @return HandlerInterface[]
+     */
+    public function getHandlers(): array
+    {
+        return $this->handlers;
+    }
+
+    /**
+     * Logs with an arbitrary level
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @throws Exception
+     */
+    public function log($level, $message, array $context = []): void
+    {
+        $this->addRecord($level, $message, $context);
+    }
+
+
+    /**
+     * Adds a log record
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param mixed[] $context
+     * @throws Exception
+     */
+    protected function addRecord($level, string $message, array $context = []): void
+    {
+        $time = new DateTime('now');
+
+        $record = [
+            'message' => (string)$message,
+            'context' => array_values($context),
+            'level' => $this->levelCodes[strtoupper($level)] ?? '',
+            'level_name' => strtoupper($level),
+            'channel' => (string)$this->channel,
+            'recorded' => $time->format(DATE_ISO8601),
+        ];
+
+        foreach ($this->handlers as $handler) {
+            $handler->handle($record);
+        }
     }
 }

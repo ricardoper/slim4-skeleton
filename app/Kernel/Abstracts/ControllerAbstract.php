@@ -10,16 +10,6 @@ abstract class ControllerAbstract extends KernelAbstract
 {
 
     /**
-     * Get Response
-     *
-     * @return Response
-     */
-    protected function getResponse(): Response
-    {
-        return $this->container['response'];
-    }
-
-    /**
      * Set Emitter
      *
      * @param string $emitter

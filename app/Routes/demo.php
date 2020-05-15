@@ -16,6 +16,6 @@ $app->get('/dump', [(new HomeController()), 'dump']);
 
 $app->get('/hello/{name}', [(new HelloController()), 'index'])->setName('namedRoute');
 
-$app->get('/addresses', [(new AddressesController()), 'list'])->setName('namedRoute');
+$app->get('/addresses', [(new AddressesController()), 'list']);
 
-$app->get('/addresses/pdo', [(new AddressesController()), 'pdo'])->setName('namedRoute');
+$app->get('/addresses/pdo', [(new AddressesController()), 'pdo']);

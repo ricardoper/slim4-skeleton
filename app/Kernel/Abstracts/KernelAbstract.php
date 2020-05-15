@@ -5,6 +5,8 @@ namespace App\Kernel\Abstracts;
 
 use App\Kernel\App;
 use Pimple\Container;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 abstract class KernelAbstract
 {
@@ -99,4 +101,25 @@ abstract class KernelAbstract
     {
         return $this->container[$name] ?? null;
     }
+
+    /**
+     * Get Request
+     *
+     * @return Request
+     */
+    protected function getRequest(): Request
+    {
+        return $this->container['request'];
+    }
+
+    /**
+     * Get Response
+     *
+     * @return Response
+     */
+    protected function getResponse(): Response
+    {
+        return $this->container['response'];
+    }
+
 }

@@ -1,12 +1,10 @@
 # PHP Slim Framework v4 Skeleton
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework v4 application.
-
-This skeleton is very customizable with a sane and organized folder structure. The code is simpler to understand too.
+A super organized (with a sane folder structure) and very customizable skeleton for Slim Framework v4. Use it to start working quickly on a new project.
 
 **NOTE**: If you want this skeleton **with Twig**, go to: (https://github.com/ricardoper/slim4-twig-skeleton).
 
-This skeleton application is built for Composer. These makes setting up a new Slim Framework v4 application quick and easy.
+This project use PHP [Composer](https://getcomposer.org/) for a fast installation without any trouble.
 
 - PHP >= 7.2
 - Customizable with an easy configuration:
@@ -15,18 +13,50 @@ This skeleton application is built for Composer. These makes setting up a new Sl
   + Configs
   + Handlers
   + Middlewares
+  + Configurations
   + Service Providers
   + Response Emitters
   + Error Handler
   + Shutdown Handler
+- Sessions
 - Controllers
 - Global Helpers
-- [Monolog](https://github.com/Seldaek/monolog) Logging
+- [PSR-3](https://www.php-fig.org/psr/psr-3/) for logging
 - Environment variables with [PHP dotenv](https://github.com/vlucas/phpdotenv)
-- [Pimple](https://pimple.symfony.com/) Dependency Injection Container
-- [ddumper](https://github.com/ricardoper/ddumper) (based on [Symfony VarDumper](https://github.com/symfony/var-dumper))
+- [Pimple](https://pimple.symfony.com/) as Dependency Injection Container
+- [ddumper](https://github.com/ricardoper/ddumper) for development (based on [Symfony VarDumper](https://github.com/symfony/var-dumper))
+- [Medoo](https://medoo.in/) Database Framework (MySQL, PostgreSQL, SQLite, MS SQL Server, ...)
 
-## How to install this skeleton
+**NOTES**:
+- *Sessions Middleware* is not enabled by default.
+- *Medoo* is optional and is not enabled by default. You can use another library as a Service Provider. If you want to use this library, don't forget to install the required PDO extensions.
+
+## Table of Contents
+- [How to Install](#how-to-install)
+- [Most Relevant Folders](#most-relevant-folders)
+- [Global Helpers](#global-helpers)
+  - [Development Only](#global-helpers-for-development-only)
+- [Configurations](#configurations)
+  - [Dot Notation](#configurations-dot-notation)
+- [Routes](#routes)
+- [Controllers](#controllers)
+  - [Helpers](#controllers-helpers)
+- [Middlewares](#middlewares)
+- [Response Emitters](#response-emitters)
+- [Models](#models)
+  - [Models Helpers](#models-helpers)
+- [Services Providers](#services-providers)
+- [Handlers](#handlers)
+- [Database Support](#database-support)
+- [Exceptions](#exceptions)
+- [Logging](#logging)
+- [Debugging](#debugging)
+- [Demo](#demo)
+- [Benchmarks](#denchmarks)
+
+---
+
+## How to Install
 
 Run this command from the directory in which you want to install your new Slim Framework v4 Skeleton.
 
@@ -34,47 +64,149 @@ Run this command from the directory in which you want to install your new Slim F
 composer create-project ricardoper/slim4-skeleton [my-app-name]
 ```
 
-Replace `[my-app-name]`with the desired directory name for your new application. You'll want to:
-- Point your virtual host document root to your new application's `public/` directory.
+**NOTE**:
+- Replace `[my-app-name]`with the desired directory name for your new application.
 - Ensure `storage/` is web writeable.
+- Point your virtual host document root to your new application's `public/` directory.
 
-## Most relevant skeleton folders
+## Most Relevant Folders
 
-- /app : *Application* code (PSR-4 **App** Namespace)
-  + ./Controllers : Add your *Controllers* here
-  + ./Emitters : Add your *Response Emitters* here
-  + ./Handlers : Add your *Handlers* here
-  + ./Middlewares : Add your *Middlewares* here
-  + ./Routes : Add your *Routes* here
-  + ./Services : Add your *Service Providers* here
+- /app : *Application* code (**App** Namespace - [PSR-4](https://www.php-fig.org/psr/psr-4/))
+  + ./Controllers : Accepts input and converts it to commands for the model. Add your *Controllers* here.
+  + ./Emitters : Emits a response, including status line, headers, and the message body, according to the environment. Add your *Response Emitters* here.
+  + ./Handlers : Handles specified behaviors of the application. Add your *Handlers* here.
+  + ./Middlewares : Provide a convenient mechanism for filtering HTTP requests entering your application. Add your *Middlewares* here.
+  + ./Models : Manages the data, logic and rules of the application. Add your *Models* here.
+  + ./Routes : Maps an HTTP request to a request handler (controller). Add your *Routes* here.
+  + ./Services : Define bindings and inject dependencies. Add your *Service Providers* here.
 - /configs : Add/modify your *Configurations* here
 - /public : Add your *Assets* files here
 
-## Helpers methods
+## Global Helpers
 
 - `env(string $variable, string $default)` - Returns *environment* variables (using DotEnv)
 - `app()` - Returns *App* instance
-- `container(string $name)` - Returns *Container* registered data
-- `configs(string $variable, string $default)` - Returns *Configuration* data
+- `container(string $name)` - Returns bindings and inject dependencies from *Container*
+- `configs(string $variable, string $default)` - Returns *Configs* data
 - `base_path(string $path)` - Returns *base path* location
 - `app_path(string $path)` - Returns *app path* location
 - `configs_path(string $path)` - Returns *configs path* location
 - `public_path(string $path)` - Returns *public path* location
 - `storage_path(string $path)` - Returns *storage path* location
-- `d($var1, $var2, ...)` - Dump vars in colapsed mode by default
-- `ddd($var1, $var2, ...)` - Dump & die vars in colapsed mode by default
+
+### Global Helpers for Development Only
+- `d($var1, $var2, ...)` - Dump vars in collapsed mode by default
+- `ddd($var1, $var2, ...)` - Dump & die vars in collapsed mode by default
 - `de($var1, $var2, ...)` - Dump vars in expanded mode by default
 - `dde($var1, $var2, ...)` - Dump & die vars in expanded mode by default
 
+## Configurations
+
+You can add as many configurations files as you want (`/configs`). These files *will be automatically preload and merged* in the container based on selected environment.
+
+If you have an environment called "sandbox" and you want to overwrite some configuration only for this environment, you need to create a subfolder "sandbox" in `/configs`. Something like that `/configs/sandbox`. Then create the file that includes the configuration that you need to replace and the respective keys and values inside it.
+
+**NOTE**: You can see the example in this framework for the *local* environment.
+
+`/configs/logger.php`
+```php
+return [
+
+    'name' => 'app',
+
+    'maxFiles' => 7,
+
+];
+```
+
+`/configs/local/logger.php`
+```php
+return [
+
+    'name' => 'app-local',
+
+];
+```
+
+Results of `name` for the environment:
+- prod : 'app'
+- sandbox : 'app'
+- **local : 'app-local'**
+- testing : 'app'
+
+
+### Configurations Dot Notation
+
+You can use **dot notation** to get values from configurations.
+
+`/configs/example.php`
+```php
+return [
+
+    'types' => [
+        'mysql' => [
+            'host' => 'localhost',
+            'port' => '3306',
+        ],
+        'postgre' => [
+            'host' => 'localhost',
+            'port' => '3306',
+        ],
+    ],
+
+];
+```
+
+If you want the `host` value for MySQL type:
+```php
+$this->getConfigs('example.types.mysql.host')  => 'localhost'
+
+configs('example.types.mysql.host') => 'localhost'
+
+container('configs')->get('example.types.mysql.host') => 'localhost'
+```
+
+## Routes
+
+*Maps an HTTP request to a request handler (Closures or Controllers).*
+
+You can add as many routes files as you want (`/app/Routes`), but you need to enable these files in `/apps/Routes/app.php` file.
+
+You can organize this routes as you like. There is a little Demo that you can see how to organize this files.
+
+```php
+use App\Controllers\Demo\AddressesController;
+use App\Controllers\Demo\HelloController;
+use App\Controllers\Demo\HomeController;
+use Slim\App;
+
+/**
+ * @var $app App
+ */
+
+$app->get('/', [(new HomeController()), 'index']);
+
+$app->get('/dump', [(new HomeController()), 'dump']);
+
+$app->get('/hello/{name}', [(new HelloController()), 'index'])->setName('namedRoute');
+
+$app->get('/addresses', [(new AddressesController()), 'list'])->setName('namedRoute');
+
+$app->get('/addresses/pdo', [(new AddressesController()), 'pdo'])->setName('namedRoute');
+```
+
 ## Controllers
+
+*Accepts input and converts it to commands for the Models.*
 
 You can add as many *Controllers* as you want in a cleaning way (`/app/Controllers`).
 
 After add your *Controller*, you can enable or disable it in your *Routes*.
 
+**NOTE**: To have helpers you must extend the **Controllers** with **ControllerAbstract** located in `\App\Kernel\Abstracts`.
+
 ```php
-use App\Emitters\PlainResponseEmitter;
-use App\Kernel\ControllerAbstract;
+use App\Kernel\Abstracts\ControllerAbstract;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -90,71 +222,68 @@ class HomeController extends ControllerAbstract
      */
     public function index(Request $request, Response $response): Response
     {
-        unset($request);
+        unset($request, $response);
 
         $data = ['Hello' => 'World!'];
 
-        $response->getBody()->write(json_encode($data));
+        return $this->json($data);
+    }
+```
+
+### Controllers Helpers
+
+- `getApp()` - Returns *App* object
+- `getContainer(string $name)` - Returns the App *Container*
+- `getConfigs(string $name)` - Returns App *Configs*
+- `getService(string $service)` - Returns *Service Provider* from container by name
+- `getRequest()` - Returns *HTTP Request*
+- `getResponse()` - Returns *HTTP Response*
+- `setEmitter(string $emitter)` : Set a new *Response Emitter*
+- `write(string $data)` - Send *to output*
+- `json(array $data, bool $sendHeaders)` - Send *JSON encoded* to output
+
+## Middlewares
+
+*Provide a convenient mechanism for filtering HTTP requests entering your application.*
+
+You can add as many *Middlewares* as you want in a cleaning way (`/app/Middlewares`).
+
+After add your *Middleware*, you can enable or disable it in `configs/middlewares.php` configuration file.
+
+**NOTE**: *Middlewares* must respect the **MiddlewareInterface** located in `\Psr\Http\Message`.
+
+```php
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface as Middleware;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+
+class ExampleMiddleware implements Middleware
+{
+
+    /**
+     * Process an incoming server request.
+     *
+     * Processes an incoming server request in order to produce a response.
+     * If unable to produce the response itself, it may delegate to the provided
+     * request handler to do so.
+     *
+     * @param Request $request
+     * @param RequestHandler $handler
+     * @return Response
+     */
+    public function process(Request $request, RequestHandler $handler): Response
+    {
+        $response = $handler->handle($request);
+
+        $response = $response->withHeader('X-Example', 'Middleware');
 
         return $response;
     }
 }
 ```
 
-## Controllers Methods
-
-- `getApp()` - Returns *App* object
-- `getContainer(string $name)` - Returns the App *Container*
-- `getConfigs(string $name)` - Returns App *Configs*
-- `getService(string $service)` - Returns *Service Provider* from container by name
-- `getResponse()` - Returns *Response*
-- `setEmitter(string $emitter)` : Set *Response Emitter*
-- `write(string $data)` - Send *plain text* output
-- `json(array $data, bool $sendHeaders)` - Send *JSON encoded* output
-
-## Response Emitters
-
-You can add as many **global** *Response Emitters* as you want in a cleaning way (`/app/Emitters`).
-
-After add your **global** *Response Emitter*, you can enable or disable it in `config/emitters.php` configuration file.
-
-```php
-use App\Emitters\ResponseEmitter;
-
-return [
-
-    ResponseEmitter::class,
-
-];
-```
-
-**NOTE**: If you need a *Response Emitter* only for one action, please verify `setEmitter(string $emitter)` in *Controllers Methods*.
-
-## Handlers
-
-You can override the following Handlers in a cleaning way (`/app/Handlers`):
-- *ErrorHandler* (default locatedl in `/app/Handlers/ErrorHandler`)
-- *ShutdownHandler* (default locatedl in `/app/Handlers/ShutdownHandler`)
-
-After add your *Handler*, you can enable or disable it in `config/app.php` configuration file.
-
-```php
-use App\Handlers\ErrorHandler;
-use App\Handlers\ShutdownHandler;
-
-return [
-
-    // Handlers //
-    'errorHandler' => ErrorHandler::class,
-    'shutdownHandler' => ShutdownHandler::class,
-```
-
-## Middlewares
-
-You can add as many *Middlewares* as you want in a cleaning way (`/app/Middlewares`).
-
-After add your *Middleware*, you can enable or disable it in `config/middlewares.php` configuration file.
-
+Enable it in `configs/middlewares.php`:
 ```php
 use App\Middlewares\Demo\ExampleMiddleware;
 
@@ -165,30 +294,102 @@ return [
 ];
 ```
 
-## Services Providers
+## Response Emitters
 
-You can add as many *Services Providers* as you want in a cleaning way (`/app/Services`).
+*Emits a response, including status line, headers, and the message body, according to the environment.*
 
-After add your *Services Provider*, you can enable or disable it in `config/services.php` configuration file.
+You can add as many *Response Emitters* as you want in a cleaning way (`/app/Emitters`).
 
-**NOTE**: **Logger** is a *Service Provider*, it can be customized as any other *Service Provider*.
+After add your *Response Emitter*, you can enable or disable it **globally** in `configs/emitters.php` configuration or you can add it in the Controller for a **specific action**.
+
+**NOTE**: *Response Emitters* must respect the **ResponseEmitterInterface** located in `\App\Kernel\Interfaces`.
 
 ```php
-use App\Services\Demo\ExampleServiceProvider;
+use App\Kernel\Interfaces\ResponseEmitterInterface;
+use Psr\Http\Message\ResponseInterface;
+
+class JsonResponseEmitter implements ResponseEmitterInterface
+{
+
+    /**
+     * Send the response to the client
+     *
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function emit(ResponseInterface $response): ResponseInterface
+    {
+        $response = $response
+            ->withHeader('Content-Type', 'application/json; charset=UTF-8');
+
+        return $response;
+    }
+}
+```
+
+Enable it in `configs/emitters.php`:
+```php
+use App\Emitters\JsonResponseEmitter;
 
 return [
 
-    ExampleServiceProvider::class,
+    JsonResponseEmitter::class,
 
 ];
 ```
 
-*Service Providers* must respect the **ServiceProviderInterface** located in `/app/Kernel` folder.
+## Models
 
-Service Provider Example:
+*Manages the data, logic and rules of the application.*
+
+You can add as many *Models* as you want in a cleaning way (`/app/Models`).
+
+After add your *Models*, you use it for, for example, in a *Controller*.
+
+**NOTE**: To have helpers you must extend the **Model** with **ModelAbstract** located in `\App\Kernel\Abstracts`.
+
 ```php
-use App\Kernel\ServiceProviderInterface;
-use Closure;
+use App\Kernel\Abstracts\ModelAbstract;
+use PDO;
+
+class AddressesModel extends ModelAbstract
+{
+
+    /**
+     * Get Last Addresses with Pdo
+     *
+     * @param int $limit
+     * @return array
+     */
+    public function getLastWithPdo(int $limit = 25): array
+    {
+        /** @var $db PDO */
+        $db = $this->getDb()->pdo;
+
+        $sql = 'SELECT `address`.`address_id`,`address`.`address`,`address`.`address2`,`address`.`district`,`city`.`city`,`address`.`postal_code`,`address`.`phone` FROM `address` ';
+        $sql .= 'LEFT JOIN `city` ON `address`.`city_id` = `city`.`city_id` ';
+        $sql .= 'ORDER BY `address_id` DESC LIMIT 10';
+
+        return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+```
+
+### Models Helpers
+
+- `getDb()` - Returns *Database* object
+
+## Services Providers
+
+*Define bindings and inject dependencies.*
+
+You can add as many *Services Providers* as you want in a cleaning way (`/app/Services`).
+
+After add your *Services Provider*, you can enable or disable it in `configs/services.php` configuration file.
+
+**NOTE**: *Service Providers* must respect the **ServiceProviderInterface** located in `\App\Kernel\Interfaces`.
+
+```php
+use App\Kernel\Interfaces\ServiceProviderInterface;
 use Pimple\Container;
 
 class ExampleServiceProvider implements ServiceProviderInterface
@@ -205,10 +406,10 @@ class ExampleServiceProvider implements ServiceProviderInterface
     /**
      * Register new service on dependency container
      *
-     * @param Container $c
-     * @return Closure
+     * @param Container $container
+     * @return mixed
      */
-    public function register(Container $c): Closure
+    public function register(Container $container)
     {
         return function (Container $c) {
             unset($c);
@@ -219,58 +420,109 @@ class ExampleServiceProvider implements ServiceProviderInterface
 }
 ```
 
-## Routes
-
-You can add as many routes files as you want (`/app/Routes`), but you need to enable these files in `/apps/Routes/app.php` file.
-
-You can organize this routes as you like. This skeleton has a little Demo that you can see how to organize this files.
-
+Enable it in `configs/services.php`:
 ```php
-use App\Controllers\Demo\HelloController;
-use App\Controllers\Demo\HomeController;
-use Slim\App;
+use App\Services\Demo\ExampleServiceProvider;
 
-/**
- * @var $app App
- */
+return [
 
-$app->get('/', [(new HomeController()), 'index']);
+    ExampleServiceProvider::class,
 
-$app->get('/dump', [(new HomeController()), 'dump']);
-
-$app->get('/hello/{name}', [(new HelloController()), 'index'])->setName('jsonHello');
+];
 ```
 
-## Configurations
+## Handlers
 
-You can add as many configurations files as you want (`/config`), but you need to enable these files in `/config/app.php` file.
+*Handles specified behaviors of the application.*
+
+You can override the following Handlers in a cleaning way (`/app/Handlers`):
+- *ErrorHandler* (default located in `/app/Handlers/ErrorHandler`)
+- *ShutdownHandler* (default located in `/app/Handlers/ShutdownHandler`)
+
+After add your *Handler*, you can enable or disable it in `configs/app.php` configuration file.
+
+```php
+use App\Handlers\ErrorHandler;
+use App\Handlers\ShutdownHandler;
+
+return [
+
+    // Handlers //
+    'errorHandler' => ErrorHandler::class,
+    'shutdownHandler' => ShutdownHandler::class,
+```
+
+## Database Support
+
+*Medoo* is implemented out of box as a *Service Provider*. The use **is optional** and is not enabled by default.
+
+To enable database support with *Medoo* you need to add this library/vendor with Composer:
+`composer require catfan/medoo`
+
+Once installed you need to enable the *Service Provider* in `configs/services.php`:
+```php
+use App\Services\Database\DatabaseServiceProvider;
+
+return [
+
+    DatabaseServiceProvider::class,
+
+];
+```
+
+Now you are ready to use it...
+
+If you need more details, documentation, api reference, please visit Medoo webpage:
+[https://medoo.in/](https://medoo.in/)
+
+**NOTES**:
+- Don't forget to load PDO extensions for your database. For example, if you need MySQL, you need to install `pdo_mysql` PHP extensions.
+- You can use another library as a *Service Provider* (Native drivers for MySQLi, PostgreSQL, MongoDB, Redis, ...).
+
+## Exceptions
+
+You have some *Exceptions* out the box, located in `\App\Kernel\Exceptions`, than you can use it:
+```text
+ConfigsException  - For Configurations Exceptions
+ModelException    - For Models Exceptions
+ServiceException  - For Service Providers Exceptions
+```
+
+## Logging
+
+Logging is enabled by default and you can see all the output in `/storage/logs/app-{date}.log`.
+
+You can set this parameters in `/.env` or in `/configs/app.php`.
+
+```text
+LOG_ERRORS |  logErrors  (bool)  - Enable/Disable logging.
+
+LOG_ERRORS_DETAILS  |  logErrorDetails  (bool)  - Enable/disable extra details in the logging file.
+
+LOG_TO_OUTPUT  | logToOutput  (bool)  - `true` to output the logs in console, `false` to output logs in file.
+
+```
+
+## Debugging
+
+Debugging is disabled by default. You can set this parameters in `/.env` or in `/configs/app.php`.
+
+```text
+APP_DEBUG  |  displayErrorDetails  (bool)  - Enable/disable debugging.
+```
 
 ## Demo
 
 This skeleton has a little Demo that you can see all this points in action.
 
 Demo URL's:
-- /
-- /dump
-- /hello/{name} - Replace {name} with your name
-
-## Logging
-
-Logging is enabled by default and you can see all the output in `/storage/logs/app.log`.
-
-You can set this parameters in `/.env` file you overwrite the `/configs/app.php`.
-
-*LOG_ERRORS* - *logErrors* - *bool* - Enable/Disable logging
-
-*LOG_ERRORS_DETAILS* - *logErrorDetails* - *bool* - Enable/Disable extra details in the logging file
-
-*APP_IN_DOCKER* - *inDocker* - *bool* - `true` to output the logs in console, `false` to output logs in file.
-
-## Debugging
-
-Debugging is disabled by default. You can set this parameters in `/.env` file you overwrite the `/configs/app.php`.
-
-*APP_DEBUG* - *displayErrorDetails* - *bool* - Enable/Disable debugging
+```text
+ /               - Hello World Example.
+ /hello/{name}   - Greet User. Replace {name} with your name.
+ /addresses      - Database example with Medoo
+ /addresses/pdo  - Database example with PDO from Medoo
+ /dump           - See the source code of this action.
+```
 
 ## Benchmarks
 
@@ -296,7 +548,7 @@ No delays between requests<br/>
 Command: siege -c25 -b -r500 "URL"<br/>
 <br/>
 
-|  | My Skeleton | Slim Skeleton |
+|  | This Skeleton | Slim Skeleton |
 | --- | :----: | :---: |
 | Transactions | 12500 hits | 12500 hits |
 | Availability | 100.00 % | 100.00 % |
