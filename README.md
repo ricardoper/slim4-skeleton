@@ -52,7 +52,7 @@ This project use PHP [Composer](https://getcomposer.org/) for a fast installatio
 - [Logging](#logging)
 - [Debugging](#debugging)
 - [Demo](#demo)
-- [Benchmarks](#denchmarks)
+- [Benchmarks](#benchmarks)
 
 ---
 
