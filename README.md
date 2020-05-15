@@ -106,8 +106,6 @@ You can add as many configurations files as you want (`/configs`). These files *
 
 If you have an environment called "sandbox" and you want to overwrite some configuration only for this environment, you need to create a subfolder "sandbox" in `/configs`. Something like that `/configs/sandbox`. Then create the file that includes the configuration that you need to replace and the respective keys and values inside it.
 
-**NOTE**: You can see the example in this framework for the *local* environment.
-
 `/configs/logger.php`
 ```php
 return [
@@ -134,6 +132,7 @@ Results of `name` for the environment:
 - **local : 'app-local'**
 - testing : 'app'
 
+**NOTE**: You can see the example in this framework for the *local* environment.
 
 ### Configurations Dot Notation
 
@@ -203,7 +202,7 @@ You can add as many *Controllers* as you want in a cleaning way (`/app/Controlle
 
 After add your *Controller*, you can enable or disable it in your *Routes*.
 
-**NOTE**: To have helpers you must extend the **Controllers** with **ControllerAbstract** located in `\App\Kernel\Abstracts`.
+**NOTE**: To have helpers you must extend the *Controllers* with **ControllerAbstract** located in `\App\Kernel\Abstracts`.
 
 ```php
 use App\Kernel\Abstracts\ControllerAbstract;
@@ -346,7 +345,7 @@ You can add as many *Models* as you want in a cleaning way (`/app/Models`).
 
 After add your *Models*, you use it for, for example, in a *Controller*.
 
-**NOTE**: To have helpers you must extend the **Model** with **ModelAbstract** located in `\App\Kernel\Abstracts`.
+**NOTE**: To have helpers you must extend the *Model* with **ModelAbstract** located in `\App\Kernel\Abstracts`.
 
 ```php
 use App\Kernel\Abstracts\ModelAbstract;
@@ -376,6 +375,12 @@ class AddressesModel extends ModelAbstract
 
 ### Models Helpers
 
+- `getApp()` - Returns *App* object
+- `getContainer(string $name)` - Returns the App *Container*
+- `getConfigs(string $name)` - Returns App *Configs*
+- `getService(string $service)` - Returns *Service Provider* from container by name
+- `getRequest()` - Returns *HTTP Request*
+- `getResponse()` - Returns *HTTP Response*
 - `getDb()` - Returns *Database* object
 
 ## Services Providers
@@ -457,7 +462,9 @@ return [
 *Medoo* is implemented out of box as a *Service Provider*. The use **is optional** and is not enabled by default.
 
 To enable database support with *Medoo* you need to add this library/vendor with Composer:
-`composer require catfan/medoo`
+```bash
+composer require catfan/medoo
+```
 
 Once installed you need to enable the *Service Provider* in `configs/services.php`:
 ```php
