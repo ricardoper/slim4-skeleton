@@ -6,7 +6,6 @@ namespace App\Kernel\Services\Logger;
 use App\Kernel\Services\Logger\Handlers\HandlerInterface;
 use App\Kernel\Services\Logger\Handlers\RotatingFileHandler;
 use DateTime;
-use DateTimeZone;
 use Exception;
 use Pimple\Container;
 use Psr\Log\AbstractLogger;

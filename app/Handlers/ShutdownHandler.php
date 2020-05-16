@@ -38,11 +38,13 @@ class ShutdownHandler
 
 
     /**
-     * ShutdownHandler constructor.
+     * ShutdownHandler constructor
      *
      * @param Request $request
-     * @param $errorHandler $errorHandler
+     * @param ErrorHandler $errorHandler
      * @param bool $displayErrorDetails
+     * @param bool $logErrors
+     * @param bool $logErrorDetails
      */
     public function __construct(
         Request $request,

@@ -128,6 +128,8 @@ if (!function_exists('array_fetch')) {
      */
     function array_fetch(array $array, string $key): array
     {
+        $results = [];
+
         foreach (explode('.', $key) as $segment) {
             $results = [];
 
