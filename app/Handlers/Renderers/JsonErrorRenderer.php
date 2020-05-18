@@ -20,17 +20,16 @@ class JsonErrorRenderer extends AbstractErrorRenderer
      */
     public function __invoke(Throwable $exception, bool $displayErrorDetails): string
     {
-        $error = ['message' => 'Application Error'];
+        $title = 'Application Error';
+
+        $error = ['message' => $title];
 
         if ($displayErrorDetails === true) {
             $error = [
-                'message' => $this->formatExceptionFragment($exception),
-                'exception' => [],
+                'message' => $title,
+                'exception' => $this->formatExceptionFragment($exception),
+                'trace' => explode("\n", $exception->getTraceAsString()),
             ];
-
-            do {
-                $error['exception'][] = explode("\n", $exception->getTraceAsString());
-            } while ($exception = $exception->getPrevious());
         }
 
         return (string)json_encode($error, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

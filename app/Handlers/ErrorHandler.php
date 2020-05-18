@@ -5,17 +5,41 @@ namespace App\Handlers;
 
 use App\Handlers\Helpers\Severity;
 use App\Handlers\Renderers\JsonErrorRenderer;
+use App\Handlers\Renderers\PlainTextErrorRenderer;
+use App\Handlers\Renderers\XmlErrorRenderer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
+use Slim\Interfaces\ErrorRendererInterface;
 use Slim\ResponseEmitter;
 use Throwable;
 
 class ErrorHandler extends SlimErrorHandler
 {
+
+    /**
+     * @var string
+     */
+    protected $defaultErrorRendererContentType = 'application/json';
+
+    /**
+     * @var ErrorRendererInterface|string|callable
+     */
+    protected $defaultErrorRenderer = JsonErrorRenderer::class;
+
+    /**
+     * @var array
+     */
+    protected $errorRenderers = [
+        'application/json' => JsonErrorRenderer::class,
+        'text/json' => JsonErrorRenderer::class,
+        'application/xml' => XmlErrorRenderer::class,
+        'text/xml' => XmlErrorRenderer::class,
+        'text/plain' => PlainTextErrorRenderer::class,
+    ];
+
 
     /**
      * Better Handler for PHP Exceptions
@@ -70,18 +94,6 @@ class ErrorHandler extends SlimErrorHandler
         $this->registerResponseEmitters($response);
     }
 
-
-    /**
-     * Determine which renderer to use based on content type
-     *
-     * @return callable
-     *
-     * @throws RuntimeException
-     */
-    protected function determineRenderer(): callable
-    {
-        return $this->callableResolver->resolve(JsonErrorRenderer::class);
-    }
 
     /**
      * Create Request Object
