@@ -25,6 +25,7 @@ This project use PHP [Composer](https://getcomposer.org/) for a fast installatio
 - Environment variables with [PHP dotenv](https://github.com/vlucas/phpdotenv)
 - [Pimple](https://pimple.symfony.com/) as Dependency Injection Container
 - [ddumper](https://github.com/ricardoper/ddumper) for development (based on [Symfony VarDumper](https://github.com/symfony/var-dumper))
+- Better Error Handlers (JSON, XML, PlainText - Accept / Content Type)
 - [Medoo](https://medoo.in/) Database Framework (MySQL, PostgreSQL, SQLite, MS SQL Server, ...)
 
 **NOTES**:
