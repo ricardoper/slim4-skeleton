@@ -39,6 +39,7 @@
         ]
     },
     "suggest": {
+        "catfan/medoo": "The Lightweight PHP Database Framework to Accelerate Development",
         "ext-pdo_mysql": "For MySQL or MariaDB database",
         "ext-pdo_sqlsrv": "For MSSQL database on both Window/Liunx platform",
         "ext-pdo_dblib": "For MSSQL or Sybase database on Linux/UNIX platform",
