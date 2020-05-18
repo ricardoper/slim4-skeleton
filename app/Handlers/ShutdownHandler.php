@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Handlers;
 
+use App\Handlers\Helpers\Severity;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Handlers\ErrorHandler;
+use Slim\ResponseEmitter;
 
 class ShutdownHandler
 {
@@ -68,39 +70,21 @@ class ShutdownHandler
     {
         $error = error_get_last();
 
-        if ($error) {
-            $errorFile = $error['file'];
-            $errorLine = $error['line'];
-            $errorMessage = $error['message'];
+        if ($error !== null) {
+            $errorFile = $error['file'] ?? null;
+            $errorLine = $error['line'] ?? null;
             $errorType = $error['type'];
-            $message = 'An error while processing your request. Please try again later.';
+            $errorMessage = $error['message'];
 
-            if ($this->displayErrorDetails) {
-                switch ($errorType) {
-                    case E_USER_ERROR:
-                        $message = "FATAL ERROR: {$errorMessage}. ";
-                        $message .= " on line {$errorLine} in file {$errorFile}.";
-                        break;
+            $message = 'An error while processing your request';
 
-                    case E_USER_WARNING:
-                        $message = "WARNING: {$errorMessage}";
-                        break;
-
-                    case E_USER_NOTICE:
-                        $message = "NOTICE: {$errorMessage}";
-                        break;
-
-                    default:
-                        $message = "ERROR: {$errorMessage}";
-                        $message .= " on line {$errorLine} in file {$errorFile}.";
-                        break;
-                }
+            if ($this->displayErrorDetails === true) {
+                $message = (new Severity())->getSeverityMessage($errorType, $errorMessage, $errorFile, $errorLine);
             }
 
-            $exception = new HttpInternalServerErrorException($this->request, $message);
             $response = $this->errorHandler->__invoke(
                 $this->request,
-                $exception,
+                (new HttpInternalServerErrorException($this->request, $message)),
                 $this->displayErrorDetails,
                 $this->logErrors,
                 $this->logErrorDetails
@@ -125,5 +109,11 @@ class ShutdownHandler
                 (new $emitter())->emit($response);
             }
         }
+
+        if (ob_get_contents()) {
+            ob_clean();
+        }
+
+        (new ResponseEmitter())->emit($response);
     }
 }

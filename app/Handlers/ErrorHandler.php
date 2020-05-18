@@ -3,70 +3,116 @@ declare(strict_types=1);
 
 namespace App\Handlers;
 
-use App\Handlers\Actions\ActionError;
-use App\Handlers\Actions\ActionPayload;
-use Exception;
+use App\Handlers\Helpers\Severity;
+use App\Handlers\Renderers\JsonErrorRenderer;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ResponseInterface as Response;
-use Slim\Exception\HttpBadRequestException;
-use Slim\Exception\HttpException;
-use Slim\Exception\HttpForbiddenException;
-use Slim\Exception\HttpMethodNotAllowedException;
-use Slim\Exception\HttpNotFoundException;
-use Slim\Exception\HttpNotImplementedException;
-use Slim\Exception\HttpUnauthorizedException;
+use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
+use Slim\Exception\HttpInternalServerErrorException;
+use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
+use Slim\ResponseEmitter;
 use Throwable;
 
 class ErrorHandler extends SlimErrorHandler
 {
 
     /**
-     * @return ResponseInterface
+     * Better Handler for PHP Exceptions
+     *
+     * @param int $type
+     * @param string $message
+     * @param string $file
+     * @param int $line
      */
-    protected function respond(): Response
+    public function handleError(int $type, string $message, string $file, int $line): void
     {
-        $statusCode = 500;
-        $exception = $this->exception;
+        $configs = configs('app');
 
-        $error = new ActionError(
-            ActionError::SERVER_ERROR,
-            'An internal error has occurred while processing your request.'
+        $exceptionMsg = 'An error while processing your request';
+
+        if ($configs['displayErrorDetails'] === true) {
+            $exceptionMsg = (new Severity())->getSeverityMessage($type, $message, $file, $line);
+        }
+
+        $request = $this->createRequestObject();
+
+        $response = $this->__invoke(
+            $request,
+            (new HttpInternalServerErrorException($request, $exceptionMsg)),
+            $configs['displayErrorDetails'],
+            $configs['logErrors'],
+            $configs['logErrorDetails']
         );
 
-        if ($exception instanceof HttpException) {
-            $statusCode = $exception->getCode();
-            $error->setDescription($exception->getMessage());
+        $this->registerResponseEmitters($response);
 
-            if ($exception instanceof HttpNotFoundException) {
-                $error->setType(ActionError::RESOURCE_NOT_FOUND);
-            } elseif ($exception instanceof HttpMethodNotAllowedException) {
-                $error->setType(ActionError::NOT_ALLOWED);
-            } elseif ($exception instanceof HttpUnauthorizedException) {
-                $error->setType(ActionError::UNAUTHENTICATED);
-            } elseif ($exception instanceof HttpForbiddenException) {
-                $error->setType(ActionError::INSUFFICIENT_PRIVILEGES);
-            } elseif ($exception instanceof HttpBadRequestException) {
-                $error->setType(ActionError::BAD_REQUEST);
-            } elseif ($exception instanceof HttpNotImplementedException) {
-                $error->setType(ActionError::NOT_IMPLEMENTED);
+        exit(1);
+    }
+
+    /**
+     * Better Handler for PHP Exceptions
+     *
+     * @param Throwable $exception
+     */
+    public function handleException(Throwable $exception): void
+    {
+        $configs = configs('app');
+
+        $response = $this->__invoke(
+            $this->createRequestObject(),
+            $exception,
+            $configs['displayErrorDetails'],
+            $configs['logErrors'],
+            $configs['logErrorDetails']
+        );
+
+        $this->registerResponseEmitters($response);
+    }
+
+
+    /**
+     * Determine which renderer to use based on content type
+     *
+     * @return callable
+     *
+     * @throws RuntimeException
+     */
+    protected function determineRenderer(): callable
+    {
+        return $this->callableResolver->resolve(JsonErrorRenderer::class);
+    }
+
+    /**
+     * Create Request Object
+     *
+     * @return ServerRequestInterface
+     */
+    protected function createRequestObject(): ServerRequestInterface
+    {
+        return $this->request ?? ServerRequestCreatorFactory::create()
+                ->createServerRequestFromGlobals();
+    }
+
+    /**
+     * Register Response Emitters
+     *
+     * @param ResponseInterface $response
+     */
+    protected function registerResponseEmitters(ResponseInterface $response): void
+    {
+        $emitters = configs('emitters');
+
+        if (is_array($emitters) && !empty($emitters)) {
+            foreach ($emitters as $emitter) {
+                (new $emitter())->emit($response);
             }
         }
 
-        if (
-            !($exception instanceof HttpException)
-            && ($exception instanceof Exception || $exception instanceof Throwable)
-            && $this->displayErrorDetails
-        ) {
-            $error->setDescription($exception->getMessage());
+        if (ob_get_contents()) {
+            ob_clean();
         }
 
-        $payload = new ActionPayload($statusCode, null, $error);
-        $encodedPayload = json_encode($payload, JSON_PRETTY_PRINT);
-
-        $response = $this->responseFactory->createResponse($statusCode);
-        $response->getBody()->write($encodedPayload);
-
-        return $response->withHeader('Content-Type', 'application/json');
+        (new ResponseEmitter())->emit($response);
     }
 }

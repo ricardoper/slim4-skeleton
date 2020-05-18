@@ -221,11 +221,17 @@ class App
     {
         $handler = $this->configs->get('handlers.errorHandler');
 
-        return new $handler(
+        $handler = new $handler(
             $this->slimApp->getCallableResolver(),
             $this->slimApp->getResponseFactory(),
             $this->container[LoggerInterface::class] ?? null
         );
+
+        set_error_handler([$handler, 'handleError']);
+
+        set_exception_handler([$handler, 'handleException']);
+
+        return $handler;
     }
 
     /**
