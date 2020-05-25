@@ -5,6 +5,6 @@ use App\Emitters\ResponseEmitter;
 
 return [
 
-    ResponseEmitter::class,
+    'response' => ResponseEmitter::class,
 
 ];

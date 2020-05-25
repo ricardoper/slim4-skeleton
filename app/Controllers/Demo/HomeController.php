@@ -61,7 +61,7 @@ class HomeController extends ControllerAbstract
         $logErrorsEnv = env('LOG_ERRORS', false);
 
         // Add Emmiter //
-        $this->setEmitter(PlainResponseEmitter::class);
+        $this->setEmitter('plain', PlainResponseEmitter::class);
 
         unset($request, $response, $arguments, $app, $container, $exampleService, $configs, $viewsConfigs, $logErrorsEnv);
 

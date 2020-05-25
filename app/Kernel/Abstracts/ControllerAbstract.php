@@ -12,13 +12,14 @@ abstract class ControllerAbstract extends KernelAbstract
     /**
      * Set Emitter
      *
+     * @param string $name
      * @param string $emitter
      */
-    protected function setEmitter(string $emitter): void
+    protected function setEmitter(string $name, string $emitter): void
     {
         $configs = $this->container['configs'];
 
-        $configs->set('emitters', array_merge($configs->get('emitters'), [$emitter]));
+        $configs->set('emitters', array_replace_recursive($configs->get('emitters'), [$name => $emitter]));
     }
 
     /**
@@ -50,7 +51,7 @@ abstract class ControllerAbstract extends KernelAbstract
         $response->getBody()->write(json_encode($data));
 
         if ($sendHeaders === true) {
-            $this->setEmitter(JsonResponseEmitter::class);
+            $this->setEmitter('json', JsonResponseEmitter::class);
         }
 
         return $response;

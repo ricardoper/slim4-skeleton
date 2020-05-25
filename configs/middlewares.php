@@ -6,8 +6,8 @@ use App\Middlewares\SessionMiddleware;
 
 return [
 
-    // SessionMiddleware::class,
+    // 'session' => SessionMiddleware::class,
 
-    ExampleMiddleware::class,
+    'example' => ExampleMiddleware::class,
 
 ];
