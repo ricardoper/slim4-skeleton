@@ -10,7 +10,6 @@ This project use PHP [Composer](https://getcomposer.org/) for a fast installatio
 - Customizable with an easy configuration:
   + Logger
   + Routes
-  + Configs
   + Handlers
   + Middlewares
   + Configurations
